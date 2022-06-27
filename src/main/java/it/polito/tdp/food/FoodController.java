@@ -7,6 +7,9 @@ package it.polito.tdp.food;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.food.model.Adiacenza;
+import it.polito.tdp.food.model.Food;
+import it.polito.tdp.food.model.FoodGrassiDiff;
 import it.polito.tdp.food.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,7 +44,7 @@ public class FoodController {
     private Button btnSimula; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxFood"
-    private ComboBox<?> boxFood; // Value injected by FXMLLoader
+    private ComboBox<Food> boxFood; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -50,12 +53,43 @@ public class FoodController {
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
     	txtResult.appendText("Creazione grafo...");
+
+    	try {
+    		int porzioni = Integer.parseInt(txtPorzioni.getText());
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			txtResult.clear();
+			txtResult.appendText("\nDevi inserire un numero intero che indichi le porzioni!");
+		}
+    	
+		int porzioni = Integer.parseInt(txtPorzioni.getText());
+    	
+    	this.model.creaGrafo(porzioni);
+    	for(Food f : this.model.listaDeiVertici()) {
+    		this.boxFood.getItems().add(f);
+    	}
+    	
+    	txtResult.appendText("\nGrafo creato!");
+    	txtResult.appendText("\nN° vertici: " + this.model.nVertici().toString());
+    	txtResult.appendText("\nN° archi: " + this.model.nArchi().toString());
     }
 
     @FXML
     void doGrassi(ActionEvent event) {
     	txtResult.clear();
     	txtResult.appendText("Analisi grassi...");
+    	
+    	Food food = boxFood.getValue();
+    	
+    	if(food == null)
+    		txtResult.appendText("\nSelezionare un cibo dalla tendina!");
+    	
+    	for(int i = 0; i <= 4; i++  ) {
+    		txtResult.appendText("\n" + this.model.listaFoodDiff(food).get(i).getFood().toString() + " - " + this.model.listaFoodDiff(food).get(i).getDifferenzaGrassi());
+    	}
+    	
+    		
+    	
     }
 
     @FXML
